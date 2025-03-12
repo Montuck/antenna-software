@@ -44,6 +44,7 @@ for d in d_values:
 
     ## compute the overlap matrix ##
     A = np.zeros((N, N))                                          # initialize the overlap matrix
+    points = 50
     for m in range(N):
         for n in range(N):
             # numerical implementation of the quadrature rule according to equations 4.69 and 4.70
@@ -51,10 +52,10 @@ for d in d_values:
             del_phi = 2*np.pi/N                                   # integration weights
             del_theta = del_phi                                   # integration weights
             r_mn = rx[m] - rx[n]                                  # distance between elements
-            for i in range(N):
-                phi_i = (i + 1/2) * del_phi                       # midpoint for each integration step
-                for j in range(int(N/2)):
-                    theta_j = (j + 1/2) * del_theta               # midpoint for each integration step
+            for i in range(points):
+                phi_i = (i - 1/2) * del_phi                       # midpoint for each integration step
+                for j in range(int(points/2)):
+                    theta_j = (j - 1/2) * del_theta               # midpoint for each integration step
 
                     # integrand
                     Em = E0 * (np.cos(k*l*np.cos(phi_i)/2)-np.cos(k*l/2)) / np.sin(phi_i) * np.exp(1j*k*d*np.sin(phi)*np.cos(theta)*r_mn)
@@ -68,10 +69,10 @@ for d in d_values:
     
     ## compute the mutual impedance matrix ##
     scalar = 2/np.abs(Im)**2    # Equation 4.108
-    Z = scalar * A              # mutual impedance matrix
+    Za = scalar * A             # mutual impedance matrix
           
     ## Compute weights ##
-    A_inv = np.linalg.pinv(A)                   # invert overlap       
+    A_inv = np.linalg.pinv(Za)                  # invert overlap       
     w = np.dot(A_inv, Ep)                       # Compute weights equation 4.86
     #print("weights \n", w)                     # debug weights
     w_cm = Ep                                   # Conjugate matched weights
@@ -85,7 +86,7 @@ for d in d_values:
     scalar = 4 * np.pi * (r**2) / Pel           # Compute directivity scalar
     wB = np.dot(w_herm, B)
     numerator = np.dot(wB, w)
-    wA = np.dot(w_herm, A)
+    wA = np.dot(w_herm, Za)
     denominator = np.dot(wA, w)
     D = scalar * numerator / denominator        # Compute directivity equation 4.63
     # D = D / (4*np.pi*r**2)
@@ -96,7 +97,7 @@ for d in d_values:
     #print("hermitian of weights \n", w_herm)
     wB = np.dot(w_herm, B)
     numerator = np.dot(wB, w_cm)
-    wA = np.dot(w_herm, A)
+    wA = np.dot(w_herm, Za)
     denominator = np.dot(wA, w_cm)
     D_cm = scalar * numerator / denominator         # Compute directivity equation 4.63
     # D_cm = D_cm / (4*np.pi*r**2)
