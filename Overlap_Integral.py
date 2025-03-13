@@ -69,7 +69,12 @@ for d in d_values:
     w_cm = Ep                                   # Conjugate matched weights
 
     ## compute signal response ##
-    B = Ep*Ep.conj().T / (2*eta)    # Compute signal response equation 4.66
+    B = np.zeros((N, N), dtype=complex)     # Initialize signal response
+    for m in range(N):
+        for n in range(N):
+            B[m, n] = Ep[m] * Ep[n].conj()  # Compute signal response equation 4.66
+    B = B / (2 * eta)                       # Normalize signal response
+    print("B \n", B)                        # debug signal response
     
     ## Compute Directivity using equation 4.63 ##
     w_herm = w.conj().T                         # Compute hermitian of weights
