@@ -19,7 +19,8 @@ Prad = 1                # Radiated power
 r = 1                   # Observation distance
 l = lam / 2             # Half-wave dipole length
 Im = 1                  # Mutual impedance
-theta = np.pi/2          # broadside or endfire
+theta = np.pi/2          # broadside
+#theta = 0               # endfire
 
 # Define element spacing range
 num_points = 100
